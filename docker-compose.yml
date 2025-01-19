@@ -1,0 +1,39 @@
+version: '3.8'
+services:
+  mysql_scrap:
+      image: 'mysql:8' 
+      container_name: 'mysql_scrap'
+      restart: always
+      environment:
+        - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+        - MYSQL_DATABASE=${DB_NAME}
+      ports:
+        - 3306:3306
+      volumes:
+        - db_data:/var/lib/mysql 
+
+  redis_scrap:
+      image: 'redis'
+      container_name: redis_scrap
+      ports:
+        - 6379:6379
+  pptr_scrap:
+      image: 'nvlkishor/pptr:latest'
+      container_name: 'pptr_scrap'
+      environment: 
+        - DB_HOST=${DB_HOST} 
+        - DB_USER=${DB_USER} 
+        - DB_PASSWORD=${DB_PASSWORD}
+        - PORT=3000
+        - REDIS_URL=${REDIS_URL}
+      ports:
+        - 3000:3000
+      depends_on:
+        - redis_scrap
+        - mysql_scrap
+
+volumes:
+  db_data:
+
+
+
